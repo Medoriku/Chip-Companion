@@ -47,6 +47,11 @@ app.get('/', (req, res) => {
 	});
 });
 
+// This is a dummy route for testing of lab-10 code 
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
+
 app.get('/login', (req, res) => {
 	res.render('pages/login', { title: 'Login' });
 });
