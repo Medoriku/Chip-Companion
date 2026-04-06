@@ -1,6 +1,32 @@
 const request = require('supertest');
-const { expect } = require('chai');
-const { app, db } = require('../src/index');
+const { app, db } = require('../src/index')
+
+const chai = require('chai'); // Chai HTTP provides an interface for live integration testing of the API's.
+const chaiHttp = require('chai-http');
+chai.should();
+chai.use(chaiHttp);
+const {assert, expect} = chai;
+
+// ********************** DEFAULT WELCOME TESTCASE ****************************
+
+describe('Server!', () => {
+  // Sample test case given to test / endpoint.
+  it('Returns the default welcome message', done => {
+    chai
+      .request(app)
+      .get('/welcome')
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.status).to.equals('success');
+        assert.strictEqual(res.body.message, 'Welcome!');
+        done();
+      });
+  });
+});
+
+// *********************** TODO: WRITE 2 UNIT TESTCASES **************************
+
+// ********************************************************************************
 
 describe('Server page routes', () => {
 	after(async () => {

@@ -4,9 +4,10 @@
 	"description": "CSCI 3308 project starter",
 	"main": "src/index.js",
 	"scripts": {
-		"start": "node src/index.js",
+		"start": "nodemon src/index.js",
 		"dev": "nodemon src/index.js",
-		"test": "mocha \"test/**/*.spec.js\" --exit"
+		"test": "mocha",
+		"testandrun": "npm run test && npm start"
 	},
 	"dependencies": {
 		"bcrypt": "^5.1.1",
@@ -17,6 +18,7 @@
 	},
 	"devDependencies": {
 		"chai": "^4.5.0",
+		"chai-http": "^4.3.0",
 		"mocha": "^11.1.0",
 		"nodemon": "^3.1.9",
 		"supertest": "^7.1.0"
