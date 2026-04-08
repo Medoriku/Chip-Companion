@@ -5,3 +5,24 @@ CREATE TABLE IF NOT EXISTS users (
 	password_hash TEXT NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS locations (
+    location_id SERIAL PRIMARY KEY,
+	user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS sessionss (
+    session_id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    buy_in NUMERIC(10,2) NOT NULL,
+    buy_out NUMERIC(10,2) NOT NULL,
+    session_date DATE NOT NULL,
+    location_id INTEGER REFERENCES locations(location_id) ON DELETE SET NULL,
+    notes TEXT
+);
+
+
+
+
+
