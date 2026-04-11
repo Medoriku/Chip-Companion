@@ -11,3 +11,36 @@
 	{{/if}}
 	<img src="/resources/img/home.png" alt="Chip Ledger home" class="home-image" />
 </section>
+
+<section class="card" id="stats-root" data-auth-user-id="{{#if user}}{{user.id}}{{/if}}">
+	<div class="stats-header">
+		<h2>Session Statistics</h2>
+	</div>
+
+	<div class="stats-controls">
+		<label for="stats-user-id">User ID</label>
+		<input id="stats-user-id" name="userId" type="number" min="1" placeholder="e.g. 1" />
+		<button id="load-stats-btn" type="button" class="btn">Load Stats</button>
+	</div>
+
+	<p id="stats-feedback" class="stats-feedback">Choose a user ID and load statistics.</p>
+
+	<div class="stats-grid" id="stats-grid" aria-live="polite"></div>
+
+	<div class="table-wrap">
+		<table class="stats-table" id="stats-table">
+			<thead>
+				<tr>
+					<th>Session</th>
+					<th>Buy In</th>
+					<th>Cash Out</th>
+					<th>Hands</th>
+					<th>Hours</th>
+					<th>Net Profit</th>
+					<th>$/hr</th>
+				</tr>
+			</thead>
+			<tbody id="stats-table-body"></tbody>
+		</table>
+	</div>
+</section>
