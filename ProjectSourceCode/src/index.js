@@ -8,6 +8,9 @@ const pg = require('pg');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const newsRoutes = require("./routes/news");
+app.use("/api/news", newsRoutes);
+
 const hbs = create({
 	extname: '.hbs',
 	layoutsDir: path.join(__dirname, 'views/layouts'),
