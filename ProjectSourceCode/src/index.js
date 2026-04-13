@@ -72,6 +72,10 @@ app.get('/sessions', (req, res) => {
 	res.render('pages/sessions', { title: 'Sessions' });
 });
 
+app.get('/news', (req, res) => {
+	res.render('pages/news', { title: 'News' });
+});
+
 app.post('/register', async (req, res) => {
 	const { username, email, password } = req.body;
 	if (!username || !email || !password) {
