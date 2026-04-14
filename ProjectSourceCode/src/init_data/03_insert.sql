@@ -9,6 +9,12 @@ VALUES
 ('Vince Wilfork', 'bigvince@gmail.com', 'bbqking12345')
 ;
 
+INSERT INTO users (username, email, password_hash)
+VALUES ('Test User', 'testuser@example.com', '$2b$10$vlTJAGigarKCEy2DZpSbsuk8dizaxHOAXY3JbYIBsM/sT.HOgL7Xm')
+ON CONFLICT (email) DO UPDATE
+SET username = EXCLUDED.username,
+	password_hash = EXCLUDED.password_hash;
+
 INSERT INTO locations (user_id, name)
 VALUES
 (1, 'Bellagio'),
