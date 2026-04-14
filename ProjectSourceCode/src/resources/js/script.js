@@ -6,16 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		return;
 	}
 
-	const authUserId = statsRoot.dataset.authUserId;
-	const userIdInput = document.getElementById('stats-user-id');
 	const loadBtn = document.getElementById('load-stats-btn');
 	const feedback = document.getElementById('stats-feedback');
 	const grid = document.getElementById('stats-grid');
 	const tableBody = document.getElementById('stats-table-body');
-
-	if (authUserId) {
-		userIdInput.value = authUserId;
-	}
 
 	function currency(value) {
 		if (value === null || value === undefined) {
@@ -67,15 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	async function loadSummary() {
-		const userId = userIdInput.value.trim();
-		if (!userId) {
-			feedback.textContent = 'Please enter a user ID first.';
-			return;
-		}
-
 		feedback.textContent = 'Loading statistics...';
 		try {
-			const response = await fetch(`/api/sessions/summary?userId=${encodeURIComponent(userId)}`);
+			const response = await fetch('/api/sessions/summary');
 			if (!response.ok) {
 				const errorBody = await response.json();
 				throw new Error(errorBody.error || 'Failed to fetch summary');
@@ -93,22 +81,24 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	loadBtn.addEventListener('click', loadSummary);
-	if (authUserId) {
-		loadSummary();
-	}
+	loadSummary();
 });
 
-document.getElementById("session_form").addEventListener("submit", function (event) {
-    const form = this;
+const sessionForm = document.getElementById('session_form');
 
-    if (!form.checkValidity()) {
-        event.preventDefault();
-        event.stopPropagation(); 
-    } else {
-        event.preventDefault();  
-        saveSession();
-    }
-});
+if (sessionForm) {
+	sessionForm.addEventListener('submit', function (event) {
+		const form = this;
+
+		if (!form.checkValidity()) {
+			event.preventDefault();
+			event.stopPropagation();
+		} else {
+			event.preventDefault();
+			saveSession();
+		}
+	});
+}
 
 function saveSession() {
                 const sessionDetails = {

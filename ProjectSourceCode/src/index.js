@@ -136,11 +136,10 @@ app.post('/logout', (req, res) => {
 
 app.get('/api/sessions/summary', async (req, res) => {
 	const sessionUserId = req.session?.user?.id;
-	const queryUserId = req.query.userId;
-	const resolvedUserId = Number(sessionUserId || queryUserId);
+	const resolvedUserId = Number(sessionUserId);
 
 	if (!Number.isInteger(resolvedUserId) || resolvedUserId <= 0) {
-		return res.status(400).json({ error: 'userId is required (session or query param)' });
+		return res.status(401).json({ error: 'You must be logged in to view statistics' });
 	}
 
 	const range = {
