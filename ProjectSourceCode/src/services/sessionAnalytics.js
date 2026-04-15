@@ -29,7 +29,7 @@ function summarizeSession(session) {
 	const rebuyNum = toNumber(session.rebuyNum, 0);
 	const rebuyAmt = toNumber(session.rebuyAmt, 0);
 	const timePlayedHoursRaw = hoursBetween(session.startTime, session.endTime);
-	const netProfitRaw = cashOut - buyIn;
+	const netProfitRaw = cashOut - (buyIn + rebuyAmt);
 	const dollarsPerHourRaw = timePlayedHoursRaw > 0 ? netProfitRaw / timePlayedHoursRaw : null;
 
 	return {
