@@ -1,0 +1,20 @@
+<section class="card form-card">
+	<h1>User Settings</h1>
+	<p class="lead-copy">Manage your account details and session preferences.</p>
+
+	<div class="stack">
+		<label>Username</label>
+		<input type="text" value="{{user.username}}" readonly />
+
+		<label>Email</label>
+		<input type="email" value="{{user.email}}" readonly />
+
+		<label>Default Session Notes</label>
+		<input type="text" value="Track notable hands and table reads" readonly />
+	</div>
+
+	<div class="hero-actions" style="margin-top: 1rem;">
+		<a href="/sessions" class="btn btn-primary">Go to Sessions</a>
+		<a href="/news" class="btn btn-secondary">View Poker News</a>
+	</div>
+</section>

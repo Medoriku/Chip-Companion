@@ -1,46 +1,72 @@
+<section class="home-hero card">
+	<div class="home-hero-content">
+		<p class="eyebrow">Poker Session Tracker</p>
+		<h1>Welcome to Chip Companion</h1>
+		{{#if user}}
+			<p class="lead-copy">You are signed in as <strong>{{user.username}}</strong>. Pick up where you left off and review your latest numbers.</p>
+			<div class="hero-actions">
+				<a class="btn" href="/sessions">Go to Sessions</a>
+				<a class="btn btn-secondary" href="/usersettings">Account Settings</a>
+			</div>
+		{{else}}
+			<p class="lead-copy">Track your poker sessions and bankroll over time with clear, session-by-session analytics.</p>
+			<div class="hero-actions">
+				<a class="btn" href="/login">Log In</a>
+				<a class="btn btn-secondary" href="/register">Register</a>
+			</div>
+		{{/if}}
+	</div>
+	<img src="/resources/img/home.png" alt="" class="home-image" aria-hidden="true" />
+</section>
+
 <section class="card">
-	<h1>Welcome to Chip Ledger</h1>
-	{{#if user}}
-		<p>You are signed in as <strong>{{user.username}}</strong>.</p>
-	{{else}}
-		<p>Track your poker sessions and bankroll over time.</p>
-		<p>
-			<a class="btn btn-primary" href="/login">Log In</a>
-			<a class="btn btn-secondary" href="/register">Register</a>
-		</p>
-	{{/if}}
-	<img src="/resources/img/home.png" alt="Chip Ledger home" class="home-image" />
-</section>
-
-<section class="card" id="stats-root" data-auth-user-id="{{#if user}}{{user.id}}{{/if}}">
-	<div class="stats-header">
-		<h2>Session Statistics</h2>
-	</div>
-
-	<div class="stats-controls">
-		<label for="stats-user-id">User ID</label>
-		<input id="stats-user-id" name="userId" type="number" min="1" placeholder="e.g. 1" />
-		<button id="load-stats-btn" type="button" class="btn">Load Stats</button>
-	</div>
-
-	<p id="stats-feedback" class="stats-feedback">Choose a user ID and load statistics.</p>
-
-	<div class="stats-grid" id="stats-grid" aria-live="polite"></div>
-
-	<div class="table-wrap">
-		<table class="stats-table" id="stats-table">
-			<thead>
-				<tr>
-					<th>Session</th>
-					<th>Buy In</th>
-					<th>Cash Out</th>
-					<th>Hands</th>
-					<th>Hours</th>
-					<th>Net Profit</th>
-					<th>$/hr</th>
-				</tr>
-			</thead>
-			<tbody id="stats-table-body"></tbody>
-		</table>
+	<h2>Quick Navigation</h2>
+	<div class="quick-grid">
+		<a class="quick-card" href="/sessions">
+			<h3>Sessions</h3>
+			<p>Log new poker sessions and review your playing history.</p>
+		</a>
+		<a class="quick-card" href="/news">
+			<h3>News</h3>
+			<p>Read current poker headlines and community updates.</p>
+		</a>
+		<a class="quick-card" href="/usersettings">
+			<h3>User Settings</h3>
+			<p>Manage account information and personal preferences.</p>
+		</a>
 	</div>
 </section>
+
+{{#if user}}
+	<section class="card" id="stats-root">
+		<div class="stats-header">
+			<h2>Session Statistics</h2>
+			<p>Load your totals and per-session performance metrics.</p>
+		</div>
+
+		<div class="stats-controls">
+			<button id="load-stats-btn" type="button" class="btn">Refresh Stats</button>
+		</div>
+
+		<p id="stats-feedback" class="stats-feedback">Loading your statistics...</p>
+
+		<div class="stats-grid" id="stats-grid" aria-live="polite"></div>
+
+		<div class="table-wrap">
+			<table class="stats-table" id="stats-table">
+				<thead>
+					<tr>
+						<th>Session</th>
+						<th>Buy In</th>
+						<th>Cash Out</th>
+						<th>Hands</th>
+						<th>Hours</th>
+						<th>Net Profit</th>
+						<th>$/hr</th>
+					</tr>
+				</thead>
+				<tbody id="stats-table-body"></tbody>
+			</table>
+		</div>
+	</section>
+{{/if}}
