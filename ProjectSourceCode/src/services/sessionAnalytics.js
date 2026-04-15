@@ -26,16 +26,20 @@ function hoursBetween(startTime, endTime) {
 function summarizeSession(session) {
 	const buyIn = toNumber(session.buyIn);
 	const cashOut = toNumber(session.cashOut);
-	const handsPlayed = toNumber(session.handsPlayed);
+	const rebuyNum = toNumber(session.rebuyNum, 0);
+	const rebuyAmt = toNumber(session.rebuyAmt, 0);
 	const timePlayedHoursRaw = hoursBetween(session.startTime, session.endTime);
-	const netProfitRaw = buyIn - cashOut;
+	const netProfitRaw = cashOut - buyIn;
 	const dollarsPerHourRaw = timePlayedHoursRaw > 0 ? netProfitRaw / timePlayedHoursRaw : null;
 
 	return {
 		sessionId: session.sessionId,
+		smallBlind: toNumber(session.smallBlind, null),
+		bigBlind: toNumber(session.bigBlind, null),
+		rebuyNum,
+		rebuyAmt,
 		buyIn,
 		cashOut,
-		handsPlayed,
 		timePlayedHours: roundTo(timePlayedHoursRaw),
 		netProfit: roundTo(netProfitRaw),
 		dollarsPerHour: dollarsPerHourRaw === null ? null : roundTo(dollarsPerHourRaw)
@@ -47,12 +51,11 @@ function summarizeSessions(userId, sessions) {
 
 	const totals = computedSessions.reduce(
 		(acc, session) => {
-			acc.totalHandsPlayed += session.handsPlayed;
 			acc.totalHours += session.timePlayedHours;
 			acc.totalNetProfit += session.netProfit;
 			return acc;
 		},
-		{ totalHandsPlayed: 0, totalHours: 0, totalNetProfit: 0 }
+		{ totalHours: 0, totalNetProfit: 0 }
 	);
 
 	const overallDollarsPerHour =
@@ -62,7 +65,6 @@ function summarizeSessions(userId, sessions) {
 		userId,
 		sessions: computedSessions,
 		totals: {
-			totalHandsPlayed: totals.totalHandsPlayed,
 			totalHours: roundTo(totals.totalHours),
 			totalNetProfit: roundTo(totals.totalNetProfit),
 			overallDollarsPerHour

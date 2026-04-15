@@ -3,31 +3,38 @@ const MOCK_SESSIONS_BY_USER = {
 		{
 			sessionId: 1001,
 			userId: 1,
+			smallBlind: 2,
+			bigBlind: 5,
+			rebuyNum: 1,
+			rebuyAmt: 100,
 			buyIn: 300,
 			cashOut: 450,
 			startTime: '2026-04-01T18:00:00.000Z',
-			endTime: '2026-04-01T21:30:00.000Z',
-			handsPlayed: 220
-		},
+			endTime: '2026-04-01T21:30:00.000Z',		},
 		{
 			sessionId: 1002,
 			userId: 1,
+			smallBlind: 1,
+			bigBlind: 3,
+			rebuyNum: 0,
+			rebuyAmt: 0,
 			buyIn: 200,
 			cashOut: 120,
 			startTime: '2026-04-03T19:15:00.000Z',
-			endTime: '2026-04-03T22:15:00.000Z',
-			handsPlayed: 185
-		}
+			endTime: '2026-04-03T22:15:00.000Z',		}
 	],
 	2: [
 		{
 			sessionId: 2001,
 			userId: 2,
+			smallBlind: 2,
+			bigBlind: 5,
+			rebuyNum: 2,
+			rebuyAmt: 75,
 			buyIn: 150,
 			cashOut: 210,
 			startTime: '2026-04-02T20:00:00.000Z',
 			endTime: '2026-04-02T23:00:00.000Z',
-			handsPlayed: 160
 		}
 	]
 };
@@ -84,13 +91,25 @@ async function addSessionForUser(userId, payload = {}) {
 	const hours = Number(payload.hours);
 	const buyIn = Number(payload.buyin);
 	const cashOut = Number(payload.cashout);
+	const smallBlind = Number(payload.smallBlind);
+	const bigBlind = Number(payload.bigBlind);
+	const rebuyNum = Number(payload.rebuyNum ?? 0);
+	const rebuyAmt = Number(payload.rebuyAmt ?? 0);
 
-	if (!date || Number.isNaN(hours) || Number.isNaN(buyIn) || Number.isNaN(cashOut)) {
-		throw new Error('date, hours, buyin, and cashout are required');
+	if (!date || Number.isNaN(hours) || Number.isNaN(buyIn) || Number.isNaN(cashOut) || Number.isNaN(smallBlind) || Number.isNaN(bigBlind) || Number.isNaN(rebuyNum) || Number.isNaN(rebuyAmt)) {
+		throw new Error('date, hours, buyin, cashout, smallBlind, bigBlind, rebuyNum, and rebuyAmt are required');
 	}
 
 	if (hours <= 0) {
 		throw new Error('hours must be greater than 0');
+	}
+
+	if (smallBlind <= 0 || bigBlind <= 0) {
+		throw new Error('smallBlind and bigBlind must be greater than 0');
+	}
+
+	if (rebuyNum < 0 || rebuyAmt < 0) {
+		throw new Error('rebuyNum and rebuyAmt cannot be negative');
 	}
 
 	const startTime = new Date(`${date}T12:00:00.000Z`);
@@ -102,11 +121,14 @@ async function addSessionForUser(userId, payload = {}) {
 	const newSession = {
 		sessionId: getNextSessionId(),
 		userId,
+		smallBlind,
+		bigBlind,
+		rebuyNum,
+		rebuyAmt,
 		buyIn,
 		cashOut,
 		startTime: startTime.toISOString(),
 		endTime: endTime.toISOString(),
-		handsPlayed: 0,
 		location: payload.location || null,
 		notes: payload.notes || null
 	};
@@ -130,11 +152,14 @@ function mapDbRowToSession(row, hoursOverride = 2) {
 	return {
 		sessionId: Number(row.sessionId),
 		userId: Number(row.userId),
+		smallBlind: row.smallBlind === null || row.smallBlind === undefined ? null : Number(row.smallBlind),
+		bigBlind: row.bigBlind === null || row.bigBlind === undefined ? null : Number(row.bigBlind),
+		rebuyNum: row.rebuyNum === null || row.rebuyNum === undefined ? 0 : Number(row.rebuyNum),
+		rebuyAmt: row.rebuyAmt === null || row.rebuyAmt === undefined ? 0 : Number(row.rebuyAmt),
 		buyIn: Number(row.buyIn),
 		cashOut: Number(row.cashOut),
 		startTime: sessionDate.toISOString(),
 		endTime: endTime.toISOString(),
-		handsPlayed: 0,
 		notes: row.notes || null
 	};
 }
@@ -193,6 +218,10 @@ function createSessionProvider(dbPool) {
 				`SELECT
 					session_id AS "sessionId",
 					user_id AS "userId",
+					small_blind AS "smallBlind",
+					big_blind AS "bigBlind",
+					rebuy_num AS "rebuyNum",
+					rebuy_amt AS "rebuyAmt",
 					buy_in AS "buyIn",
 					buy_out AS "cashOut",
 					session_date AS "sessionDate",
@@ -211,27 +240,43 @@ function createSessionProvider(dbPool) {
 			const hours = Number(payload.hours);
 			const buyIn = Number(payload.buyin);
 			const cashOut = Number(payload.cashout);
+			const smallBlind = Number(payload.smallBlind);
+			const bigBlind = Number(payload.bigBlind);
+			const rebuyNum = Number(payload.rebuyNum ?? 0);
+			const rebuyAmt = Number(payload.rebuyAmt ?? 0);
 
-			if (!date || Number.isNaN(hours) || Number.isNaN(buyIn) || Number.isNaN(cashOut)) {
-				throw new Error('date, hours, buyin, and cashout are required');
+			if (!date || Number.isNaN(hours) || Number.isNaN(buyIn) || Number.isNaN(cashOut) || Number.isNaN(smallBlind) || Number.isNaN(bigBlind) || Number.isNaN(rebuyNum) || Number.isNaN(rebuyAmt)) {
+				throw new Error('date, hours, buyin, cashout, smallBlind, bigBlind, rebuyNum, and rebuyAmt are required');
 			}
 
 			if (hours <= 0) {
 				throw new Error('hours must be greater than 0');
 			}
 
+			if (smallBlind <= 0 || bigBlind <= 0) {
+				throw new Error('smallBlind and bigBlind must be greater than 0');
+			}
+
+			if (rebuyNum < 0 || rebuyAmt < 0) {
+				throw new Error('rebuyNum and rebuyAmt cannot be negative');
+			}
+
 			const notes = payload.notes || null;
 			const inserted = await dbPool.query(
-				`INSERT INTO sessions (user_id, buy_in, buy_out, session_date, location_id, notes)
-				 VALUES ($1, $2, $3, $4, NULL, $5)
+				`INSERT INTO sessions (user_id, small_blind, big_blind, rebuy_num, rebuy_amt, buy_in, buy_out, session_date, location_id, notes)
+				 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NULL, $9)
 				 RETURNING
 					session_id AS "sessionId",
 					user_id AS "userId",
+					small_blind AS "smallBlind",
+					big_blind AS "bigBlind",
+					rebuy_num AS "rebuyNum",
+					rebuy_amt AS "rebuyAmt",
 					buy_in AS "buyIn",
 					buy_out AS "cashOut",
 					session_date AS "sessionDate",
 					notes`,
-				[userId, buyIn, cashOut, date, notes]
+				[userId, smallBlind, bigBlind, rebuyNum, rebuyAmt, buyIn, cashOut, date, notes]
 			);
 
 			return mapDbRowToSession(inserted.rows[0], hours);

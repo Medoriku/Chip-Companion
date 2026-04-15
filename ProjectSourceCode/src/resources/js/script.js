@@ -129,13 +129,21 @@ function initSessionsPage() {
 		return `$${Number(value).toFixed(2)}`;
 	}
 
+	function formatStakes(smallBlind, bigBlind) {
+		const sb = Number(smallBlind);
+		const bb = Number(bigBlind);
+		if (!Number.isFinite(sb) || !Number.isFinite(bb) || sb <= 0 || bb <= 0) {
+			return '--';
+		}
+		return `${currency(sb)}/${currency(bb)}`;
+	}
+
 	function renderTotals(totals) {
 		grid.innerHTML = '';
 
 		const cards = [
 			{ label: 'Total Net Profit', value: currency(totals.totalNetProfit) },
 			{ label: 'Total Hours', value: Number(totals.totalHours).toFixed(2) },
-			{ label: 'Total Hands', value: totals.totalHandsPlayed },
 			{ label: 'Overall $/hr', value: currency(totals.overallDollarsPerHour) }
 		];
 
@@ -151,7 +159,7 @@ function initSessionsPage() {
 		tableBody.innerHTML = '';
 
 		if (!rows.length) {
-			tableBody.innerHTML = '<tr><td colspan="7">No sessions logged yet.</td></tr>';
+			tableBody.innerHTML = '<tr><td colspan="9">No sessions logged yet.</td></tr>';
 			return;
 		}
 
@@ -159,9 +167,11 @@ function initSessionsPage() {
 			const row = document.createElement('tr');
 			row.innerHTML = `
 				<td>${index + 1}</td>
+				<td>${formatStakes(rowData.smallBlind, rowData.bigBlind)}</td>
 				<td>${currency(rowData.buyIn)}</td>
 				<td>${currency(rowData.cashOut)}</td>
-				<td>${rowData.handsPlayed}</td>
+				<td>${Number(rowData.rebuyNum || 0)}</td>
+				<td>${currency(rowData.rebuyAmt || 0)}</td>
 				<td>${Number(rowData.timePlayedHours).toFixed(2)}</td>
 				<td>${currency(rowData.netProfit)}</td>
 				<td>${currency(rowData.dollarsPerHour)}</td>
@@ -230,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		const cards = [
 			{ label: 'Total Net Profit', value: currency(totals.totalNetProfit) },
 			{ label: 'Total Hours', value: Number(totals.totalHours).toFixed(2) },
-			{ label: 'Total Hands', value: totals.totalHandsPlayed },
 			{ label: 'Overall $/hr', value: currency(totals.overallDollarsPerHour) }
 		];
 
@@ -247,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		if (!sessions.length) {
 			tableBody.innerHTML =
-				'<tr><td colspan="7">No sessions found for this user/date range.</td></tr>';
+				'<tr><td colspan="8">No sessions found for this user/date range.</td></tr>';
 			return;
 		}
 
@@ -257,7 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
 				<td>${index + 1}</td>
 				<td>${currency(session.buyIn)}</td>
 				<td>${currency(session.cashOut)}</td>
-				<td>${session.handsPlayed}</td>
+				<td>${Number(session.rebuyNum || 0)}</td>
+				<td>${currency(session.rebuyAmt || 0)}</td>
 				<td>${Number(session.timePlayedHours).toFixed(2)}</td>
 				<td>${currency(session.netProfit)}</td>
 				<td>${currency(session.dollarsPerHour)}</td>
