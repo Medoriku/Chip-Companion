@@ -360,4 +360,37 @@ app.post('/auth/google', async (req, res) => {
 	}
 });
 
+app.post('/usersettings/update-username', requireLogin, async (req, res) => {
+    const { username } = req.body;
+    
+    // Safety check for session
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    const userId = req.session.user.id; 
+
+    try {
+        await db.query(
+            'UPDATE users SET username = $1 WHERE id = $2',
+            [username, userId]
+        );
+        
+        // Update the session data so the UI reflects the change immediately
+        req.session.user.username = username;
+        
+        res.redirect('/usersettings?success=true');
+    } catch (err) {
+        console.error('Database error during username update:', err);
+        
+        // Handle duplicate username error (Postgres code 23505)
+        if (err.code === '23505') {
+            return res.status(400).send('Username already taken.');
+        }
+        
+        res.status(500).send('Error updating username');
+    }
+});
+
 module.exports = { app, db };
+

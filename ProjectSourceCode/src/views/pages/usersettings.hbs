@@ -1,20 +1,28 @@
 <section class="card form-card">
-	<h1>User Settings</h1>
-	<p class="lead-copy">Manage your account details and session preferences.</p>
+    <h1>User Settings</h1>
+    <p class="lead-copy">Manage your account details and session preferences.</p>
 
-	<div class="stack">
-		<label>Username</label>
-		<input type="text" value="{{user.username}}" readonly />
+	<form action="/usersettings/update-username" method="POST" class="stack">
+        <div class="stack">
+            <label for="username">Username</label>
+            <div class="input-group" style="display: flex; gap: 0.5rem;">
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    value="{{user.username}}" 
+                    required 
+                />
+                <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem;">Save</button>
+            </div>
 
-		<label>Email</label>
-		<input type="email" value="{{user.email}}" readonly />
+            <label>Email</label>
+            <input type="email" value="{{user.email}}" readonly class="disabled-input" />
+        </div>
+    </form>
 
-		<label>Default Session Notes</label>
-		<input type="text" value="Track notable  and table reads" readonly />
-	</div>
-
-	<div class="hero-actions" style="margin-top: 1rem;">
-		<a href="/sessions" class="btn btn-primary">Go to Sessions</a>
-		<a href="/news" class="btn btn-secondary">View Poker News</a>
-	</div>
+    <div class="hero-actions" style="margin-top: 2rem; border-top: 1px solid #eee; pt-1rem;">
+        <a href="/sessions" class="btn btn-secondary">Go to Sessions</a>
+        <a href="/news" class="btn btn-secondary">View Poker News</a>
+    </div>
 </section>
